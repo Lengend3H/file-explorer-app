@@ -4,6 +4,13 @@ FileExplorer::FileExplorer() {
     current_path = fs::current_path();
 }
 
+// Fixed time conversion function
+std::time_t FileExplorer::to_time_t(const fs::file_time_type& ftime) {
+    auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+        ftime - fs::file_time_type::clock::now() + std::chrono::system_clock::now());
+    return std::chrono::system_clock::to_time_t(sctp);
+}
+
 void FileExplorer::run() {
     std::cout << "=== File Explorer Application ===" << std::endl;
     std::cout << "Current directory: " << current_path << std::endl;
@@ -97,7 +104,9 @@ void FileExplorer::display_file_info(const fs::directory_entry& entry) {
                 std::cout << std::setw(8) << format_file_size(entry.file_size()) << " ";
             }
             
-            std::time_t mod_time = fs::last_write_time(entry.path());
+            // FIXED: Using the new time conversion function
+            auto ftime = fs::last_write_time(entry.path());
+            std::time_t mod_time = to_time_t(ftime);
             std::cout << std::put_time(std::localtime(&mod_time), "%Y-%m-%d %H:%M") << " ";
         }
         

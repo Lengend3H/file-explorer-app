@@ -14,6 +14,7 @@
 #include <fstream>
 #include <sstream>
 #include <unistd.h>
+#include <chrono>
 
 namespace fs = std::filesystem;
 
@@ -40,6 +41,7 @@ private:
     std::string get_permissions_string(fs::perms p);
     std::string format_file_size(uintmax_t size);
     void display_file_info(const fs::directory_entry& entry);
+    std::time_t to_time_t(const fs::file_time_type& ftime);
 };
 
 #endif
